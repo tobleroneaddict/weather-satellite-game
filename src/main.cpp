@@ -1,3 +1,5 @@
+//This is a skeleton for my future games :3
+
 #include "globals.h"
 #include "satellite.h"
 

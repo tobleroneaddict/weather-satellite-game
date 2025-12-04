@@ -12,10 +12,8 @@ void Satellite::step_simulation() {
 
     //Run electrical systems
     if (haspower) {
-        Z80Execute(&dataproc.proc.chip);   //Scientific Data Processor Unit
-        Z80Execute(&attitude.proc.chip);   //Navigation & Attitude Processor
-        Z80Execute(&powchip.proc.chip);   //Electrical Power Processor
-        Z80Execute(&CMDhandler.proc.chip);  //Ground command handler
+        cout << "stepping\n";
+        
         cout << "step!\n";
     } else {
         cout << "dead!\n";
@@ -24,16 +22,8 @@ void Satellite::step_simulation() {
 
 
 
-
 //Start Z80s
 void Satellite::init() {
-    dataproc.proc.init();
-    attitude.proc.init();
-    powchip.proc.init();
-    CMDhandler.proc.init();
-
-
-    //Load CMDhandler 
 
 }
 

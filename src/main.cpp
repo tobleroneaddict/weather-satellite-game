@@ -1,16 +1,19 @@
-//This is a skeleton for my future games :3
-
 #include "globals.h"
+#include "satellite.h"
+
 using namespace std;
 
 Uint64 NOW = SDL_GetPerformanceCounter();
 Uint64 LAST = 0;
 //deltatime in the globals so other can use it
 
+Satellite sat;
+
 //Game init stuff
 void init() {
     SDL_HideCursor();
 
+    sat.dp.init();
 }
 
 //main loop
@@ -22,7 +25,7 @@ int loop() {
     while (SDL_PollEvent(&e))
     {
         //Quit events
-        if (e.type == SDL_EVENT_QUIT)   return 1;   if (e.type == SDL_EVENT_KEY_UP && e.key.key == SDLK_ESCAPE)return 1;
+        if (e.type == SDL_EVENT_QUIT)   {return 1;}   if (e.type == SDL_EVENT_KEY_UP && e.key.key == SDLK_ESCAPE){return 1;}
 
 
 
@@ -62,10 +65,10 @@ int main() {
     init(); //Place any init things here
 
     //Run game loop and get dT
-    while (true) {
-        LAST = NOW;NOW = SDL_GetPerformanceCounter(); deltaTime = (double)((NOW - LAST)*1000 / (double)SDL_GetPerformanceFrequency() );
-        if (loop()) break;
-    }
+    //while (true) {
+    //    LAST = NOW;NOW = SDL_GetPerformanceCounter(); deltaTime = (double)((NOW - LAST)*1000 / (double)SDL_GetPerformanceFrequency() );
+    //    if (loop()) break;
+    //}
 
     //Termination
     SDL_DestroyRenderer(sdl_renderer);

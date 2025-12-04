@@ -1,28 +1,42 @@
 #pragma once
 #include "globals.h"
 
-//Satellite motions
+//  Trying new comment style
+//  Satellite motions
 using namespace glm;
 
+//https://medium.com/intuition/dont-trust-runge-kutta-blindly-be392663fbe4
+
 struct Earth {
-    double radius = 6378137.0; //m
-    double mu = 3.986004418e14; //m3 s-2
-    double J2 = 1.08262668e-3; //oblateness coeff
-    double rotation_rate = 7.2921159e-5; //rad/s
+    double radius = 6378137.0;      //  m
+    double mu = 3.986004418e14;     //  G*M
+    double J2 = 1.08262668e-3;      //  oblateness coeff
+    double rotation_rate = 7.2921159e-5;    // rad/s
 };
 
-//loosely based on NOAA 19 
-struct Phys {
-    //Earth Centered Inertial
-    vec3 POS;
-    vec3 VEL;
-    vec3 attitude; //should make quaternion......
+//  loosely based on NOAA 19 
+class Phys {
+public:
+    Earth planet;
+    //  Earth Centered Inertial, Cartesian coordinates
+    dvec3 POS = {1799.209 * 1000, -3960.856 * 1000, 5797.431 * 1000};    //  m
+    dvec3 VEL = {-4.08207 * 1000, 4.3215701 * 1000, 4.413379 * 1000};    //  m/s
+    dvec3 T_ACC = {0,0,0}; //Thruster acceleration
+    quat attitude; //att
+    quat rate; //att rate
+    
 
-    //Mass
-    double dry_mass = 1479; //kg
-    double wet_mass =  753; //kg
+    //  Mass
+    double dry_mass = 1479;     //  kg
+    double wet_mass =  753;     //  kg
 
-    //Drag
-    double cross_section_meters; //used for drag calcs
+    //  Drag
+    double cross_section_meters = 5.23;     //  used for drag calcs m^2
     double Cd, Cr;  
+
+    //  Step forward
+    void step();
+private:
+    void leap_frog();
+    glm::dvec3 grav_f();
 };

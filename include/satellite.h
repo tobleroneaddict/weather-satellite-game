@@ -1,6 +1,6 @@
 #pragma once
 #include "globals.h"
-#include "z80.h"
+#include "physics.h"
 //#include "commands.h"
 using namespace glm;
 
@@ -20,8 +20,8 @@ struct Power_System {
     bool BUS_RELAY_A = true;
     bool BUS_RELAY_B = false;
     //PWM Controlled left/right outputs
-    bool SOLAR_ROTATE_LEFT;
-    bool SOLAR_ROTATE_RIGHT;
+    float SOLAR_ROTATE_LEFT;
+    float SOLAR_ROTATE_RIGHT;
 
 };
 
@@ -33,13 +33,17 @@ struct Scanner {
     float body_temp;
     float patch_temp;
 
-    float scanner_channel_1;
-    float scanner_channel_2;
-    float scanner_channel_3a;
-    float scanner_channel_3b;
-    float scanner_channel_4;  
+    float scanner_channel_1;    //0
+    float scanner_channel_2;    //1
+    float scanner_channel_3a;   //2
+    float scanner_channel_3b;   //3
+    float scanner_channel_4;    //4
+    float scanner_channel_5;    //5
+    float scanner_channel_6;    //6
+    
 
-    float mirror_encoder;
+    float mirror_tgt_velocity = 37.6991118; //rad/s
+    float mirror_position;
     bool mirror_power;
 };
 
@@ -54,6 +58,8 @@ struct IMMSU_Data { //Contains data from the magnets too
 
 class Satellite {
 public:
+    Phys physics;
+
     Power_System power;
 
     void step_simulation();
@@ -62,5 +68,6 @@ public:
 private:
     Scanner scanner;
 
-
+    float step_current; //power draw of this current step
+    void sim_mirror_motor();
 };

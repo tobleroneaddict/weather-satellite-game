@@ -6,18 +6,23 @@ enum VERB { //All these can be delayed by the delay in the command packet (added
     SET_TIME_BASE, //Sets internal clock to (x << 32) | (y << 16) | (z)
     GET_TIME_BASE,
     RESET_SYSTEM, //X: select system
-    
+    SAFE_MODE,
+    TELEMETRY_MODE_SET, //X bool : Enable / disable L band telemetry
 
+    //Attitude
     ACDS_STEER_TARGET,    //Target P,R,Y 
     ACDS_MODE_INERTIAL, //Hold target
     ACDS_MODE_NORMAL,
-    ACDS_GET_IMU, // Returns IMU Angle if X is false, IMU rot rate if X is true
-
+    ACDS_GET_QUATERNION, // Returns 
+    ACDS_RATE_LIMIT,
+    
 
 
     //Communication
-    COMM_SET_MODE, //X: VHF, Y: L Band, Z: SAR    enable/disable
+    COMM_SET_MODE, //X: VHF, Y: L Band,    enable/disable
     COMM_SET_POWER, //X: VHF hi/lo Y: Lb hi/lo
+    COMM_APT_SET, //X: Enable/disable
+    COMM_SET_VHF_BEACON, //X: ED
     
     //Recording of scientific data to tape
     TAPE_SET_DRIVE, //X: Start,stop     Y: forward/rewind       Z: high/low speed
@@ -27,7 +32,9 @@ enum VERB { //All these can be delayed by the delay in the command packet (added
     //Sensors
     SCANNER_ENABLE_POWER,
     SCANNER_DISABLE_POWER,
-    
+    SCANNER_SET_GAIN, //X: Channel select, Y: Gain,
+    SCANNER_SET_FRAME, //X: Set left frame to [frame], Y: right
+
 
 
     
@@ -52,8 +59,9 @@ enum VERB { //All these can be delayed by the delay in the command packet (added
     BURN_SET_DV,
     //Set angle by IMU
     BURN_START,   //Takes no XYZ inputs
+    GET_TANK_PRESSURE,
+    BURN_ABORT,
     VERB_MAX
-
 };
 
 //Command packets happen over S band communication

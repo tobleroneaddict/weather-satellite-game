@@ -38,9 +38,18 @@ int loop() {
     }
 
     //Draw stuff
-    SDL_SetRenderDrawColor(sdl_renderer,100,150,100,255);
+    SDL_SetRenderDrawColor(sdl_renderer,0,0,0,255);
     SDL_RenderClear(sdl_renderer);
 
+    
+
+    float x = sat.physics.POS.x / 50000;
+    float y = sat.physics.POS.z / 50000;
+    x += 600;
+    y += 600;
+
+    SDL_SetRenderDrawColor(sdl_renderer,250,250,250,255);
+    SDL_RenderLine(sdl_renderer,600,600,x,y);
 
     SDL_RenderPresent(sdl_renderer);
     return 0;
@@ -69,13 +78,14 @@ int main() {
 
     init(); //Place any init things here
 
-    sat.step_simulation();
+    //sat.step_simulation();
     
     //Run game loop and get dT
-    //while (true) {
-    //    LAST = NOW;NOW = SDL_GetPerformanceCounter(); deltaTime = (double)((NOW - LAST)*1000 / (double)SDL_GetPerformanceFrequency() );
-    //    if (loop()) break;
-    //}
+    while (true) {
+        LAST = NOW;NOW = SDL_GetPerformanceCounter(); deltaTime = (double)((NOW - LAST)*1000 / (double)SDL_GetPerformanceFrequency() );
+        if (loop()) break;
+        SDL_Delay(100);
+    }
 
     //Termination
     SDL_DestroyRenderer(sdl_renderer);

@@ -1,5 +1,6 @@
 #pragma once
 #include <SDL3_image/SDL_image.h>
+#include "glm/gtc/quaternion.hpp"
 #include <SDL3_ttf/SDL_ttf.h>
 #include <SDL3/SDL_time.h>
 #include <SDL3/SDL_main.h>

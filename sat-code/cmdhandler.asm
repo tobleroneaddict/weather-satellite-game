@@ -55,8 +55,8 @@ _isr_nmi::
 	push	de
 	push	hl
 	push	iy
-;sat-code/cmdhandler.c:15: *(uint8_t*)0x8010 = 'N';
-	ld	hl, #0x8010
+;sat-code/cmdhandler.c:15: *(uint8_t*)0x3010 = 'N';
+	ld	hl, #0x3010
 	ld	(hl), #0x4e
 ;sat-code/cmdhandler.c:16: }
 	pop	iy
@@ -70,8 +70,8 @@ _isr_nmi::
 ; Function main
 ; ---------------------------------
 _main::
-;sat-code/cmdhandler.c:19: flag = (float*)0x8000;
-	ld	hl, #0x8000
+;sat-code/cmdhandler.c:19: flag = (float*)0x3000;
+	ld	hl, #0x3000
 	ld	(_flag), hl
 ;sat-code/cmdhandler.c:24: while (1) {
 00102$:

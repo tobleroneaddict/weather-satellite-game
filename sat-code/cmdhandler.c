@@ -5,6 +5,7 @@
 #include <stdint.h>
 
 //Z80
+//Address space will be:
 
 
 float *flag;
@@ -12,11 +13,11 @@ float *flag;
 
 void isr_nmi(void) __interrupt(1)
 {
-    *(uint8_t*)0x8010 = 'N';
+    *(uint8_t*)0x3010 = 'N';
 }
 
 void main(void) {
-    flag = (float*)0x8000;
+    flag = (float*)0x3000;
     float meow = 30.5;
 
 

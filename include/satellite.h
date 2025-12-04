@@ -68,10 +68,27 @@ struct Scanner {
     bool mirror_power;
 };
 
+
+//Board
+class Z80 {
+    public:
+    Z80Context chip;
+    uint8_t rom[0x7FFF]; //32kb byte ROM
+    uint8_t ram[0x7FFF]; //32kb RAM, stack
+
+    void init();
+
+    
+};
+
+
+
+
+
 class SDP { //Scientific Data Processor Unit
 public:
-    Z80Context chip;
-    uint8_t ram[0x2000]; //8192 byes of RAM
+    Z80 proc;
+    
 
     //INPUTS
 
@@ -95,13 +112,11 @@ public:
 
 
 
-    void init();
 };
 
 class EPP { //Electrical Power Processor , also handles thermals
 public:
-    Z80Context chip;
-    uint8_t ram[0x2000]; //8192 byes of RAM
+    Z80 proc;
     //MMIO pins
 
     //INPUT INPUT INPUT Analog inputs from sensors,  0-65536
@@ -128,7 +143,7 @@ public:
 
 
 
-    void init();
+
 };
 
 
@@ -141,8 +156,7 @@ struct IMMSU_Data { //Contains data from the magnets too
 
 class NAP { //Navigation & Attitude Processor
 public:
-    Z80Context chip;
-    uint8_t ram[0x2000]; //8192 byes of RAM
+    Z80 proc;
     uint16_t accX;
     uint16_t accY;
     uint16_t accZ;
@@ -154,7 +168,7 @@ public:
     uint16_t magZ;
 
     
-    void init();
+
 };
 
 
@@ -162,13 +176,13 @@ public:
 //Recieve commands from S band antenna and feed command data into this z80
 class CHS {
 public:
-    Z80Context chip;
-    uint8_t ram[0x2000]; //8192 byes of RAM
+    Z80 proc;
+
 
     //INPUTS
     
     
-    void init();
+
 };
 
 class Satellite {

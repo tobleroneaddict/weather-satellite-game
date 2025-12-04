@@ -20,3 +20,6 @@ extern int WINDOW_HEIGHT;
 extern int MAX_WORLD_X;
 extern int MAX_WORLD_Y;
 extern double deltaTime;
+
+
+void clear_ram(uint8_t* ram);

@@ -13,7 +13,7 @@ responsible for reading scientific data from sensors, combining them into a pack
 
 
 EPP Monitor
-Solar, battteries, all that stuff
+Solar, battteries, all that stuff, Thermals
 
 NAP
 
@@ -30,6 +30,25 @@ Power system monitoring
 
 
 */
+struct Power_System {
+    float BUS_VOLTAGE_A = 27;
+    float BUS_CURRENT_A;
+    float BUS_VOLTAGE_B = 29;
+    float BUS_CURRENT_B;
+
+    float SOLAR_ROTOR_ENCODER;
+    float SOLAR_VOLTAGE;
+    
+
+    //Outputs from Z80
+    //Only switch one bus high
+    bool BUS_RELAY_A = true;
+    bool BUS_RELAY_B = false;
+    //PWM Controlled left/right outputs
+    bool SOLAR_ROTATE_LEFT;
+    bool SOLAR_ROTATE_RIGHT;
+
+};
 
 struct Thermistors {
     int body;    
@@ -52,7 +71,7 @@ struct Scanner {
 class SDP { //Scientific Data Processor Unit
 public:
     Z80Context chip;
-
+    uint8_t ram[0x2000]; //8192 byes of RAM
 
     //INPUTS
 
@@ -79,10 +98,10 @@ public:
     void init();
 };
 
-class EPP { //Electrical Power Processor
+class EPP { //Electrical Power Processor , also handles thermals
 public:
     Z80Context chip;
-    
+    uint8_t ram[0x2000]; //8192 byes of RAM
     //MMIO pins
 
     //INPUT INPUT INPUT Analog inputs from sensors,  0-65536
@@ -112,15 +131,6 @@ public:
     void init();
 };
 
-class TCP { //Thermal Control Processor
-public:
-    Z80Context chip;
-
-    //INPUTS
-
-
-    void init();
-};
 
 //I'm not going to simulate any IMU torquing lol 
 struct IMMSU_Data { //Contains data from the magnets too
@@ -132,7 +142,7 @@ struct IMMSU_Data { //Contains data from the magnets too
 class NAP { //Navigation & Attitude Processor
 public:
     Z80Context chip;
-
+    uint8_t ram[0x2000]; //8192 byes of RAM
     uint16_t accX;
     uint16_t accY;
     uint16_t accZ;
@@ -150,9 +160,10 @@ public:
 
 
 //Recieve commands from S band antenna and feed command data into this z80
-class Command_Handler_System {
+class CHS {
+public:
     Z80Context chip;
-    
+    uint8_t ram[0x2000]; //8192 byes of RAM
 
     //INPUTS
     
@@ -162,17 +173,18 @@ class Command_Handler_System {
 
 class Satellite {
 public:
+    Power_System power;
+
+    void step_simulation();
+    void init();
     //Power system worked on at home
-
+private:
     //Processing units
-    SDP dp;
-    TCP thermal;
-    NAP att;
-    EPP power;
-    
-
-    Command_Handler_System ch;
-
+    SDP dataproc;
+    NAP attitude;
+    EPP powchip;
+    CHS CMDhandler;
     Scanner scanner;
+
 
 };

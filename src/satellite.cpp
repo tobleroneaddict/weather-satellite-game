@@ -1,24 +1,43 @@
 #include "../include/satellite.h"
 
-#define AF1 chip.R1.wr.AF
-#define BC1 chip.R1.wr.BC
-#define DE1 chip.R1.wr.DE
-#define HL1 chip.R1.wr.HL
-#define AF2 chip.R2.wr.AF
-#define BC2 chip.R2.wr.BC
-#define DE2 chip.R2.wr.DE
-#define HL2 chip.R2.wr.HL
-#define IX chip.R1.wr.IX
-#define IY chip.R1.wr.IY
-#define SP chip.R1.wr.SP
-#define PC chip.PC
-#define I chip.I
-#define R chip.R
-#define IFF1 chip.IFF1
-#define IFF2 chip.IFF2
-#define IM chip.IM
+using namespace std;
 
-void SDP::init() {
-    Z80RESET(&chip);
-    std::cout << "RESET\n";
+void Satellite::step_simulation() {
+    //Check 28V power state
+    bool haspower,bus_A_nominal,bus_B_nominal;
+    bus_A_nominal = (power.BUS_VOLTAGE_A > 23.0f && power.BUS_VOLTAGE_A < 35) ? true : false;   // In Range
+    bus_B_nominal = (power.BUS_VOLTAGE_B > 23.0f && power.BUS_VOLTAGE_B < 35) ? true : false;   
+    haspower = (bus_A_nominal && power.BUS_RELAY_A) || (bus_B_nominal && power.BUS_RELAY_B); //If A good on A, or B good on B
+
+
+    //Run electrical systems
+    if (haspower) {
+        Z80Execute(&dataproc.chip);   //Scientific Data Processor Unit
+        Z80Execute(&attitude.chip);   //Navigation & Attitude Processor
+        Z80Execute(&powchip.chip);   //Electrical Power Processor
+        Z80Execute(&CMDhandler.chip);  //Ground command handler
+        cout << "step!\n";
+    } else {
+        cout << "dead!\n";
+    }
 }
+
+
+
+
+
+//Start Z80s
+void Satellite::init() {
+    dataproc.init();
+    attitude.init();
+    powchip.init();
+    CMDhandler.init();
+}
+
+
+
+
+void SDP::init() {clear_ram(ram); Z80RESET(&chip);}
+void NAP::init() {clear_ram(ram); Z80RESET(&chip);}
+void EPP::init() {clear_ram(ram); Z80RESET(&chip);}
+void CHS::init() {clear_ram(ram); Z80RESET(&chip);}

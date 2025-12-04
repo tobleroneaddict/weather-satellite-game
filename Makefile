@@ -5,7 +5,7 @@ HDRS = -I include
 SRC = ./src
 SRCS = $(wildcard $(SRC)/*.cpp)
 OBJS = $(SRCS:.cpp=.o)
-OUT = .
+OUT = ./bin
 all: build
 
 build: $(OBJS)

@@ -15,11 +15,14 @@ Satellite sat;
 void init() {
     SDL_HideCursor();
 
-    sat.dp.init();
+    sat.init();
 }
 
 //main loop
 int loop() {
+
+    sat.step_simulation();
+
     //cout << deltaTime;
 
     //Input handler
@@ -66,6 +69,8 @@ int main() {
 
     init(); //Place any init things here
 
+    sat.step_simulation();
+    
     //Run game loop and get dT
     //while (true) {
     //    LAST = NOW;NOW = SDL_GetPerformanceCounter(); deltaTime = (double)((NOW - LAST)*1000 / (double)SDL_GetPerformanceFrequency() );

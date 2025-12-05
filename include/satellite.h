@@ -1,7 +1,8 @@
 #pragma once
 #include "globals.h"
 #include "physics.h"
-//#include "commands.h"
+#include "commands.h"
+
 using namespace glm;
 
 
@@ -29,6 +30,11 @@ struct Thermistors {
     int body;    
 };
 
+struct Command_antenna {
+    command_packet   uplink = {VERB_MAX,0,0,0,0};
+    return_packet  downlink;
+};
+
 struct Scanner {
     float body_temp;
     float patch_temp;
@@ -54,20 +60,65 @@ struct IMMSU_Data { //Contains data from the magnets too
     vec3 magnetic_strength; // Gauss
 };
 
+class Satellite; //Forward dec
 
+
+class TECS {
+    public:
+    void step(Satellite* sat);
+    private:
+};
+class SDPU {
+    public:
+    void step(Satellite* sat);
+    private:
+};
+class ADCS {
+    public:
+    void step(Satellite* sat);
+    private:
+};
+class COMM {
+    public:
+    void step(Satellite* sat);
+    void clear();
+    private:
+    float telemetry_timer;
+    void run_command(Satellite* sat);
+    command_packet queue[256] = {}; int queue_store_position = 0; //Stack, will grow UP! >:3
+    int current_queue_position = 0; //Advances every tick, no commands run until RTC >= TTG.
+    //If an instant (<256 steps) command is desired, TTG 0 may be used:
+    //Uplinked commands will go here waiting for RTC >= TTG.
+};
 
 class Satellite {
 public:
     Phys physics;
 
+    //Physical stuff
+    Scanner scanner;
     Power_System power;
+    double rtc;
+    //Send L band packets to satellite
+    Command_antenna tantenna;
+
+    
+    
 
     void step_simulation();
+
     void init();
     //Power system worked on at home
 private:
-    Scanner scanner;
+    
+
+    //Compute
+    TECS sys_tecs;
+    SDPU sys_sdpu;
+    ADCS sys_adcs;
+    COMM sys_comm;
 
     float step_current; //power draw of this current step
     void sim_mirror_motor();
+
 };

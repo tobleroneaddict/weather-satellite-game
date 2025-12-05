@@ -1,7 +1,10 @@
 #pragma once
 #include "globals.h"
 
+
+//Dangerous toggle instructions have separeated ON OFF commands (like pyro) 
 enum VERB { //All these can be delayed by the delay in the command packet (added to the queue)
+    VERB_NOOP,
     //System
     SET_TIME_BASE, //Sets internal clock to (x << 32) | (y << 16) | (z)
     GET_TIME_BASE,
@@ -10,12 +13,16 @@ enum VERB { //All these can be delayed by the delay in the command packet (added
     TELEMETRY_MODE_SET, //X bool : Enable / disable L band telemetry
 
     //Attitude
-    ACDS_STEER_TARGET,    //Target P,R,Y 
-    ACDS_MODE_INERTIAL, //Hold target
-    ACDS_MODE_NORMAL,
-    ACDS_GET_QUATERNION, // Returns 
-    ACDS_RATE_LIMIT,
-    
+    ADCS_STEER_TARGET,    //Target P,R,Y 
+    ADCS_MODE_INERTIAL, //Hold target
+    ADCS_MODE_NORMAL,   //Normal attitude for earth scanning (pointing prograde)
+    ADCS_GET_MODE,
+    ADCS_GET_QUATERNION, // Returns 
+    ADCS_RATE_LIMIT,
+    ADCS_GET_RATES,
+    ADCS_GET_MAG,
+    ADCS_SET_RW_SPEED,
+    ADCS_UNLOAD_MOMENTUM,
 
 
     //Communication
@@ -34,15 +41,17 @@ enum VERB { //All these can be delayed by the delay in the command packet (added
     SCANNER_DISABLE_POWER,
     SCANNER_SET_GAIN, //X: Channel select, Y: Gain,
     SCANNER_SET_FRAME, //X: Set left frame to [frame], Y: right
-
+    SEM_SET_POWER,
+    SOLAR_GET_SENSORS,
+    THERMAL_GET_SENSORS,
 
 
     
     //Power & Thermals
     THERMAL_CONTROL_AUTO,
-    THERMAL_CONTROL_OVERRIDE,
+    THERMAL_CONTROL_OVERRIDE, //takes data
     SOLAR_TRACK_AUTO,
-    SOLAR_TRACK_OVERRIDE,
+    SOLAR_TRACK_OVERRIDE, //TAKEs data
     BUS_SWITCH_A,
     BUS_SWITCH_B,
     GET_BUS_DATA, //Based on X being true or false, returns V << 16 | A of selected Bus
@@ -56,9 +65,9 @@ enum VERB { //All these can be delayed by the delay in the command packet (added
     COMM_L_DEPLOY,
     COMM_VHF_DEPLOY,
 
-    BURN_SET_DV,
+    BURN_SET_DELTAS,
     //Set angle by IMU
-    BURN_START,   //Takes no XYZ inputs
+    BURN_EXECUTE,   //Takes no XYZ inputs
     GET_TANK_PRESSURE,
     BURN_ABORT,
     VERB_MAX
@@ -67,11 +76,11 @@ enum VERB { //All these can be delayed by the delay in the command packet (added
 //Command packets happen over S band communication
 struct command_packet {
     VERB data_verb;
-    uint16_t x, y, z;
-    uint64_t delay; //millseconds from Time Base
+    double x, y, z;
+    double TTG; //millseconds from Time Base
 };
 
 struct return_packet {
-    uint16_t x, y, z;
-    uint32_t result;
+    double x, y, z;
+    double result;
 };

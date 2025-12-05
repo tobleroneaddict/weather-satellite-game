@@ -20,7 +20,8 @@ extern int WINDOW_WIDTH;
 extern int WINDOW_HEIGHT;
 extern int MAX_WORLD_X;
 extern int MAX_WORLD_Y;
-extern double deltaTime;
+extern double deltaTime, physics_deltaTime;
+extern double universal_time; //Invisible to satellite
 
 
 void clear_ram(uint8_t* ram);

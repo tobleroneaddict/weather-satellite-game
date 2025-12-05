@@ -7,6 +7,7 @@ using namespace std;
 
 Uint64 NOW = SDL_GetPerformanceCounter();
 Uint64 LAST = 0;
+
 //deltatime in the globals so other can use it
 
 Satellite sat;
@@ -21,7 +22,14 @@ void init() {
 //main loop
 int loop() {
 
+    
+
     sat.step_simulation();
+    //sat.tantenna.uplink.data_verb = GET_TIME_BASE;
+
+    //if (sat.tantenna.downlink.result != 0)
+    //{cout << "Result reads: " << sat.tantenna.downlink.result << endl;}
+
 
     //cout << deltaTime;
 
@@ -44,13 +52,15 @@ int loop() {
     
 
     float x = sat.physics.POS.x / 50000;
-    float y = sat.physics.POS.z / 50000;
+    float y = sat.physics.POS.y / 50000;
+    float z = sat.physics.POS.z / 50000;
     x += 600;
     y += 600;
+    z += 600;
 
     SDL_SetRenderDrawColor(sdl_renderer,250,250,250,255);
     SDL_RenderLine(sdl_renderer,600,600,x,y);
-
+    //SDL_RenderLine(sdl_renderer,600,600,y,z);
     SDL_RenderPresent(sdl_renderer);
     return 0;
 }
@@ -79,12 +89,23 @@ int main() {
     init(); //Place any init things here
 
     //sat.step_simulation();
+    //sat.tantenna.uplink.data_verb = GET_TIME_BASE;
     
+
+    //Example: Setting the time base
+    sat.tantenna.uplink.data_verb = SET_TIME_BASE;
+    sat.tantenna.uplink.x = universal_time; //Set X register to universal time
+    sat.tantenna.uplink.TTG = 0; // Instant execute
+    sat.step_simulation(); //Flush to stack
+    cout << "Onboard RTC has been set to: " << sat.tantenna.downlink.result << endl; //Check RTC (SET_TIME_BASE txs this)
+
     //Run game loop and get dT
     while (true) {
-        LAST = NOW;NOW = SDL_GetPerformanceCounter(); deltaTime = (double)((NOW - LAST)*1000 / (double)SDL_GetPerformanceFrequency() );
+        LAST = NOW;NOW = SDL_GetPerformanceCounter(); deltaTime = (double)((NOW - LAST) / (double)SDL_GetPerformanceFrequency() );
+        deltaTime = deltaTime * 1000;
+        universal_time += deltaTime; //Ground station
         if (loop()) break;
-        SDL_Delay(100);
+        //SDL_Delay(1);
     }
 
     //Termination

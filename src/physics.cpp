@@ -4,9 +4,14 @@
 void Phys::step() {
     //Run VEL
     leap_frog();
-    //Run ROT, since its a feedback loop i shouldnt need to accurately integrate it like orbits (?)
-    //**   sctiuffff */
+    
+    //Run ANG
+    dquat av = {0.0f, rate.x,rate.y,rate.z};
 
+    attitude += 0.5 * attitude * av * deltaTime;
+
+    attitude = normalize(attitude);
+    //attitude * rate;
 }
 
 
@@ -25,7 +30,7 @@ glm::dvec3 Phys::grav_f() {
 //  Step forward
 void Phys::leap_frog() {
     dvec3 acc_curr;
-    double ddt = (double)deltaTime / 100;
+    double ddt = (double) deltaTime;
 
     //Current time sep acceleration
     acc_curr = grav_f() += T_ACC; 

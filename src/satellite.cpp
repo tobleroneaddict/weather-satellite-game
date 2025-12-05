@@ -123,8 +123,9 @@ void COMM::step(Satellite* sat) {
     telemetry_timer += deltaTime;
     if (telemetry_timer >= 1) {
         telemetry_timer = 0;
-        double altitude = sat->physics.POS.length() - sat->physics.planet.radius;
-        cout << -altitude / 1000 << "km" << endl;
+        double altitude = sqrt((sat->physics.POS.x * sat->physics.POS.x) + (sat->physics.POS.y * sat->physics.POS.y) + (sat->physics.POS.z * sat->physics.POS.z));
+        altitude -= sat->physics.planet.radius;
+        cout << altitude / 1000 << "km" << endl;
         
     }
     //END TELEMETRY

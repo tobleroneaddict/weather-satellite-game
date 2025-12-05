@@ -18,7 +18,7 @@ struct Earth {
 class Phys {
 public:
     Earth planet;
-    //  Earth Centered Inertial, Cartesian coordinates
+    //  Earth Centered Inertial, Cartesian coordinates pulled from GMAT
     dvec3 POS = {1799.209 * 1000, -3960.856 * 1000, 5797.431 * 1000};    //  m
     dvec3 VEL = {-4.08207 * 1000, 4.3215701 * 1000, 4.413379 * 1000};    //  m/s
     dvec3 T_ACC = {0,0,0}; //Thruster acceleration

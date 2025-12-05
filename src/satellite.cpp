@@ -8,7 +8,7 @@ void TECS::step(Satellite* sat) {
 
 }
 void TECS::reset() {
-
+    
 }
 
 //Scientific Data Processing Unit

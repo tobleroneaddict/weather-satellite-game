@@ -12,6 +12,7 @@ struct Earth {
     double mu = 3.986004418e14;     //  G*M
     double J2 = 1.08262668e-3;      //  oblateness coeff
     double rotation_rate = 7.2921159e-5;    // rad/s
+    float tilt = 23.5;
 };
 
 //  loosely based on NOAA 19 
@@ -24,7 +25,8 @@ public:
     dvec3 T_ACC = {0,0,0}; //Thruster acceleration
     dquat attitude; //att
     dvec3 rate; //att rate
-    
+    //Sun position in ECI frame
+    dvec3 SUN = {146.9 * 1000 * 1000, 0, 0};
 
     //  Mass
     double dry_mass = 1479;     //  kg

@@ -12,8 +12,8 @@ struct Power_System {
     float BUS_VOLTAGE_B = 29;
     float BUS_CURRENT_B;
 
-    float SOLAR_ROTOR_ENCODER;
-    float SOLAR_TARGET_ANGLE;
+    //Add PID and target angle
+    float SOLAR_ROTOR_ENCODER = 0;
     float SOLAR_VOLTAGE;
     
 
@@ -70,9 +70,9 @@ class TECS {
     public:
     void reset();
     void step(Satellite* sat);
-    private:
-        
+    private:      
 };
+
 //Sci
 class SDPU {
     public:

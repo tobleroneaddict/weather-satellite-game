@@ -7,41 +7,79 @@ using namespace std;
 void TECS::step(Satellite* sat) {
 
 }
+void TECS::reset() {
+
+}
 
 //Scientific Data Processing Unit
 void SDPU::step(Satellite* sat) {
 
 }
 
-//Attitude Determination CS
+//Attitude Determination & Control System
 void ADCS::step(Satellite* sat) {
 
 }
+void ADCS::reset() {
+    mode = INERTIAL_GUIDANCE_MODE;
+
+}
+
 
 void COMM::run_command(Satellite* sat) {
     command_packet* cm = &queue[current_queue_position];
+
+    //Packet registers
+    double* x_down = &sat->tantenna.downlink.x;
+    double* y_down = &sat->tantenna.downlink.y;
+    double* z_down = &sat->tantenna.downlink.z;
+    double* r_down = &sat->tantenna.downlink.result;
+    
+    
     switch (cm->data_verb) {
         case (VERB_NOOP): cout << "This shouldnt happen in this func\n";
         break;
         case (SET_TIME_BASE): 
         sat->rtc = cm->x;   //Set RTC and return result
-        sat->tantenna.downlink.result = sat->rtc;
+        *r_down = sat->rtc;
         break;
         case (GET_TIME_BASE): 
-        sat->tantenna.downlink.result = sat->rtc;
+        *r_down = sat->rtc;
         break;
         case (RESET_SYSTEM): 
         sat->init(); //This control flow might be buggywuggy
         break;
         case (SAFE_MODE): break;
         case (TELEMETRY_MODE_SET): break;
-        case (ADCS_STEER_TARGET): break;
-        case (ADCS_MODE_INERTIAL): break;
-        case (ADCS_MODE_NORMAL): break;
-        case (ADCS_GET_MODE): break;
+
+        case (ADCS_STEER_TO_TARGET): //Set angles
+        sat->sys_adcs.t_roll = cm->x;
+        sat->sys_adcs.t_pitch = cm->y;
+        sat->sys_adcs.t_yaw = cm->z;
+        
+        break; //command target
+        case (ADCS_SET_MODE_TARGET): sat->sys_adcs.mode = STEERING_GUIDANCE_MODE; break;
+        case (ADCS_SET_MODE_INERTIAL):sat->sys_adcs.mode = INERTIAL_GUIDANCE_MODE; break;
+        case (ADCS_SET_MODE_NORMAL): sat->sys_adcs.mode = STANDARD_GUIDANCE_MODE; break;
+        case (ADCS_GET_MODE):
+        {switch (sat->sys_adcs.mode) {
+                case (INERTIAL_GUIDANCE_MODE):*r_down = 0; break;
+                case (STANDARD_GUIDANCE_MODE):*r_down = 1; break;
+                case (STEERING_GUIDANCE_MODE):*r_down = 2; break;
+        }} break;
+
         case (ADCS_GET_QUATERNION): break;
-        case (ADCS_RATE_LIMIT): break;
-        case (ADCS_GET_RATES): break;
+        case (ADCS_RATE_LIMIT):
+        sat->sys_adcs.rate_limit_roll = cm->x;
+        sat->sys_adcs.rate_limit_pitch = cm->y;
+        sat->sys_adcs.rate_limit_yaw = cm->z;
+        break;
+        case (ADCS_GET_RATES): 
+        *x_down = sat->sys_adcs.rate_roll;
+        *y_down = sat->sys_adcs.rate_pitch;
+        *z_down = sat->sys_adcs.rate_yaw;
+        *r_down = 1;
+        break;
         case (ADCS_GET_MAG): break;
         case (ADCS_SET_RW_SPEED): break;
         case (ADCS_UNLOAD_MOMENTUM): break;
@@ -53,8 +91,9 @@ void COMM::run_command(Satellite* sat) {
         case (COMM_SET_VHF_BEACON): break;
         case (TAPE_SET_DRIVE): break;
         case (TAPE_SET_MODE): break;
-        case (SCANNER_ENABLE_POWER): break;
-        case (SCANNER_DISABLE_POWER): break;
+        
+        case (SCANNER_ENABLE_POWER):  sat->scanner.mirror_power =  true; break;
+        case (SCANNER_DISABLE_POWER): sat->scanner.mirror_power = false; break;
         case (SCANNER_SET_GAIN): break;
         case (SCANNER_SET_FRAME): break;
         case (SOLAR_GET_SENSORS): break;
@@ -180,5 +219,8 @@ void Satellite::sim_mirror_motor() {
 
 void Satellite::init() {
     scanner.mirror_power = true;
+    sys_tecs.reset();
     sys_comm.clear();
+    sys_adcs.reset();
+    //sys_sdpu.reset();
 }

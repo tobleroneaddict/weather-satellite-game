@@ -13,9 +13,10 @@ enum VERB { //All these can be delayed by the delay in the command packet (added
     TELEMETRY_MODE_SET, //X bool : Enable / disable L band telemetry
 
     //Attitude
-    ADCS_STEER_TARGET,    //Target P,R,Y 
-    ADCS_MODE_INERTIAL, //Hold target
-    ADCS_MODE_NORMAL,   //Normal attitude for earth scanning (pointing prograde)
+    ADCS_SET_MODE_TARGET,    //Target 
+    ADCS_STEER_TO_TARGET, //P,R,Y 
+    ADCS_SET_MODE_INERTIAL, //Hold target
+    ADCS_SET_MODE_NORMAL,   //Normal attitude for earth scanning (pointing prograde)
     ADCS_GET_MODE,
     ADCS_GET_QUATERNION, // Returns 
     ADCS_RATE_LIMIT,

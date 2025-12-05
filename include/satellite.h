@@ -13,6 +13,7 @@ struct Power_System {
     float BUS_CURRENT_B;
 
     float SOLAR_ROTOR_ENCODER;
+    float SOLAR_TARGET_ANGLE;
     float SOLAR_VOLTAGE;
     
 
@@ -20,10 +21,6 @@ struct Power_System {
     //Only switch one bus high
     bool BUS_RELAY_A = true;
     bool BUS_RELAY_B = false;
-    //PWM Controlled left/right outputs
-    float SOLAR_ROTATE_LEFT;
-    float SOLAR_ROTATE_RIGHT;
-
 };
 
 struct Thermistors {
@@ -62,22 +59,40 @@ struct IMMSU_Data { //Contains data from the magnets too
 
 class Satellite; //Forward dec
 
+enum ADCS_MODES {
+    INERTIAL_GUIDANCE_MODE, //look to target/ pause rates
+    STANDARD_GUIDANCE_MODE, //Prograde facing
+    STEERING_GUIDANCE_MODE  //Steer to target    
 
+};
+//Thermal / Power
 class TECS {
     public:
+    void reset();
     void step(Satellite* sat);
     private:
+        
 };
+//Sci
 class SDPU {
     public:
     void step(Satellite* sat);
     private:
 };
+//Attitude
 class ADCS {
     public:
+    //RPY
+    double t_roll,t_pitch,t_yaw;
+    double rate_roll,rate_pitch,rate_yaw;
+    double rate_limit_roll, rate_limit_pitch, rate_limit_yaw;
+
+    ADCS_MODES mode;
+    void reset();
     void step(Satellite* sat);
     private:
 };
+//Comms
 class COMM {
     public:
     void step(Satellite* sat);
@@ -104,7 +119,12 @@ public:
 
     
     
-
+    //Compute
+    TECS sys_tecs;
+    SDPU sys_sdpu;
+    ADCS sys_adcs;
+    COMM sys_comm;
+    
     void step_simulation();
 
     void init();
@@ -112,11 +132,7 @@ public:
 private:
     
 
-    //Compute
-    TECS sys_tecs;
-    SDPU sys_sdpu;
-    ADCS sys_adcs;
-    COMM sys_comm;
+    
 
     float step_current; //power draw of this current step
     void sim_mirror_motor();

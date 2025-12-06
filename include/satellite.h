@@ -12,8 +12,8 @@ struct Power_System {
     float BUS_VOLTAGE_B = 29;
     float BUS_CURRENT_B;
 
-    //Add PID and target angle
-    float SOLAR_ROTOR_ENCODER = 0;
+    float SOLAR_INCIDENCE;
+    float SOLAR_AREA;
     float SOLAR_VOLTAGE;
     
 
@@ -83,12 +83,14 @@ class SDPU {
 class ADCS {
     public:
     //RPY
-    double t_roll,t_pitch,t_yaw;
+    dquat targetq;
+    double t_roll,t_pitch,t_yaw; //transmit these values
     double rate_roll,rate_pitch,rate_yaw;
     double rate_limit_roll, rate_limit_pitch, rate_limit_yaw;
 
     ADCS_MODES mode;
     void reset();
+    dquat get_error(dquat current);
     void step(Satellite* sat);
     private:
 };

@@ -2,6 +2,10 @@
 
 
 void Phys::step() {
+    //Add mass
+    TOTAL_MASS = dry_mass + STAR_37_XFB_FUEL + HYDRAZINE_FUEL + COLD_GAS_FUEL;
+    
+
     //Run VEL
     leap_frog();
     
@@ -12,12 +16,35 @@ void Phys::step() {
 
     attitude = normalize(attitude);
     //attitude * rate;
+
+    //Zero acc before stepping next
+    T_ACC = dvec3 { 0,0,0 };
+
+
+    //Reset if below earth for testing
+    if (sqrt( glm::dot(POS,POS)) < planet.radius) {
+        std::cout << "Crash!\n";
+        POS = {1799.209 * 1000, -3960.856 * 1000, 5797.431 * 1000};
+        VEL = {-4.08207 * 1000, 4.3215701 * 1000, 4.413379 * 1000};
+    }
+}
+
+//Used for star37
+void Phys::kick_motor(float newtons) {
+    vec3 forward = attitude * dvec3(0,0,1); //forward
+    T_ACC += forward * (newtons / TOTAL_MASS);
 }
 
 
+//Calculate how direct the solar panel is
+float Phys::solar_panel_directivity(dvec3 local_panel_normal) {   //Directly forward is  0 0 1
+    vec3 sun_direction = normalize(SUN - POS);
+    vec3 global_panel_normal = normalize(attitude * local_panel_normal); //transform panel into world space
 
+    return max(dot(global_panel_normal,sun_direction),0.0f);    //Incidence angle
+}
 
-
+// TODO: add oblateness
 //  Calculate gravity force
 glm::dvec3 Phys::grav_f() {
     double r2, r3;

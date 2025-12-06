@@ -19,10 +19,24 @@ void SDPU::step(Satellite* sat) {
 //Attitude Determination & Control System
 void ADCS::step(Satellite* sat) {
 
+    dvec3 v = -normalize(sat->physics.VEL);
+    dvec3 nadir = -normalize(sat->physics.POS);
+
+    dvec3 up = normalize(nadir - v * dot(nadir, v));
+
+    dquat targetq = quatLookAtRH(up,up);
+
+    //targetq = dquat{-normalize(sat->physics.VEL)};    //45,45,45 global
+    //dquat error = get_error(sat->physics.attitude); //Get error to target quat
+    //cout << error.x << endl;
+    sat->physics.attitude = targetq;
 }
 void ADCS::reset() {
     mode = INERTIAL_GUIDANCE_MODE;
 
+}
+dquat ADCS::get_error(dquat current) {
+    return targetq * conjugate(current);
 }
 
 
@@ -103,8 +117,7 @@ void COMM::run_command(Satellite* sat) {
 
         case (THERMAL_CONTROL_AUTO): break;
         case (THERMAL_CONTROL_OVERRIDE): break;
-        case (SOLAR_TRACK_AUTO): break;
-        case (SOLAR_TRACK_OVERRIDE): break;
+
         
         case (BUS_SWITCH_A): break;
         case (BUS_SWITCH_B): break;
@@ -115,8 +128,8 @@ void COMM::run_command(Satellite* sat) {
         case (CAMERA_COVER_DEPLOY): break;
         case (COMM_L_DEPLOY): break;
         case (COMM_VHF_DEPLOY): break;
-        case (BURN_SET_DELTAS): break;
-        case (BURN_EXECUTE): break;
+        case (BURN_SET_DELTAS): break;  //NOAA-17 did not have any maneuvering but this is still here for if i wanna reuse this software
+        case (BURN_EXECUTE): break;     //Starts the STAR-37 AKM
         case (BURN_ABORT): break;
         case (GET_TANK_PRESSURE): break;
         case (VERB_MAX): cout << "This shouldnt happen in this func 2\n"; break; //Unused
@@ -164,7 +177,7 @@ void COMM::step(Satellite* sat) {
         telemetry_timer = 0;
         double altitude = sqrt((sat->physics.POS.x * sat->physics.POS.x) + (sat->physics.POS.y * sat->physics.POS.y) + (sat->physics.POS.z * sat->physics.POS.z));
         altitude -= sat->physics.planet.radius;
-        cout << altitude / 1000 << "km" << endl;
+        //cout << altitude / 1000 << "km" << endl;
         
     }
     //END TELEMETRY
@@ -178,7 +191,7 @@ void COMM::clear() {
 
 void Satellite::step_simulation() {
     rtc += deltaTime; //RTC has a backup battery
-    physics.step();
+    
     //cout << (glm::dot(physics.POS,physics.POS)) << endl;
 
     //Check 28V power state
@@ -188,7 +201,17 @@ void Satellite::step_simulation() {
     haspower = (bus_A_nominal && power.BUS_RELAY_A) || (bus_B_nominal && power.BUS_RELAY_B); //If A good on A, or B good on B
 
     //Amps
-    step_current = 2.750; //accumulator
+    step_current = 2.750; //accumulator,add a little bit of compute power
+
+
+    //needs 833 watts to survive(?)
+
+    dvec3 panel_angle = {    0, cos(120.0f),sin(120.0f)    };
+    power.SOLAR_INCIDENCE = physics.solar_panel_directivity(panel_angle);
+    
+
+    //physics.kick_motor(-0.001);
+
 
     //Run electrical systems
     if (haspower) {
@@ -206,6 +229,8 @@ void Satellite::step_simulation() {
     }
 
     //do something w power draw
+
+    physics.step();
 }
 
 void Satellite::sim_mirror_motor() {

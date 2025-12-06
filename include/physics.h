@@ -28,9 +28,16 @@ public:
     //Sun position in ECI frame
     dvec3 SUN = {146.9 * 1000 * 1000, 0, 0};
 
+    
+
     //  Mass
-    double dry_mass = 1479;     //  kg
-    double wet_mass =  753;     //  kg
+    float dry_mass = 1479;        //  kg
+    float STAR_37_XFB_FUEL = 924; // kg   @ launch 
+    float HYDRAZINE_FUEL = 27.44;   // kg  @ launch
+    float COLD_GAS_FUEL = 4.17;   //kg
+    float TOTAL_MASS;
+    //double wet_mass =  753;     //  kg
+
 
     //  Drag
     double cross_section_meters = 5.23;     //  used for drag calcs m^2
@@ -38,6 +45,10 @@ public:
 
     //  Step forward
     void step();
+
+    void kick_motor(float newtons);
+    
+    float solar_panel_directivity(dvec3 local_panel_normal);
 private:
     void leap_frog();
     glm::dvec3 grav_f();

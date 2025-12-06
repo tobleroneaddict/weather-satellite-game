@@ -51,8 +51,6 @@ enum VERB { //All these can be delayed by the delay in the command packet (added
     //Power & Thermals
     THERMAL_CONTROL_AUTO,
     THERMAL_CONTROL_OVERRIDE, //takes data
-    SOLAR_TRACK_AUTO,
-    SOLAR_TRACK_OVERRIDE, //TAKEs data
     BUS_SWITCH_A,
     BUS_SWITCH_B,
     GET_BUS_DATA, //Based on X being true or false, returns V << 16 | A of selected Bus

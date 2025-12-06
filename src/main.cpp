@@ -14,16 +14,23 @@ Satellite sat;
 
 //Game init stuff
 void init() {
+    sat.init();
+    sat.step_simulation();
+
     SDL_HideCursor();
 
-    sat.init();
+    //Already inserted in orbit
+    sat.physics.STAR_37_XFB_FUEL = 0;
+    sat.physics.HYDRAZINE_FUEL = 4.98f;
+
 }
+
 
 //main loop
 int loop() {
 
     
-
+    
     sat.step_simulation();
     //sat.tantenna.uplink.data_verb = GET_TIME_BASE;
 
@@ -39,7 +46,9 @@ int loop() {
     {
         //Quit events
         if (e.type == SDL_EVENT_QUIT)   {return 1;}   if (e.type == SDL_EVENT_KEY_UP && e.key.key == SDLK_ESCAPE){return 1;}
-
+        if (e.type == SDL_EVENT_KEY_DOWN && e.key.key == SDLK_E) {
+            sat.physics.kick_motor(2537.49*1000);
+        }
 
 
         //.......................... other key events here`
@@ -47,19 +56,23 @@ int loop() {
 
     //Draw stuff
     SDL_SetRenderDrawColor(sdl_renderer,0,0,0,255);
-    SDL_RenderClear(sdl_renderer);
+    //SDL_RenderClear(sdl_renderer);
 
     
 
     float x = sat.physics.POS.x / 50000;
     float y = sat.physics.POS.y / 50000;
     float z = sat.physics.POS.z / 50000;
-    x += 600;
-    y += 600;
-    z += 600;
+    x += 400;
+    y += 400;
+    z += 400;
 
     SDL_SetRenderDrawColor(sdl_renderer,250,250,250,255);
-    SDL_RenderLine(sdl_renderer,600,600,x,y);
+    SDL_RenderLine(sdl_renderer,x+800,z,x+800,z);
+    SDL_RenderLine(sdl_renderer,x+800,y,x+800,y);
+    SDL_RenderLine(sdl_renderer,400+800,400,400+800,400);
+    SDL_RenderLine(sdl_renderer,400+800,400 - (6378137/50000),400+800,400 + (6378137/50000));
+    SDL_RenderLine(sdl_renderer,400+800 - (6378137/50000),400,400+800 + (6378137/50000),400);
     //SDL_RenderLine(sdl_renderer,600,600,y,z);
     SDL_RenderPresent(sdl_renderer);
     return 0;

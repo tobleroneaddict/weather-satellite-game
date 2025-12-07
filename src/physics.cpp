@@ -52,13 +52,7 @@ glm::dvec3 Phys::grav_f() {
     r2 = glm::dot(POS,POS); //distance**
     r3 = r2 * sqrt(r2);
     auto pull_earth =  -planet.mu * POS / r3;
-
-    //For this simulation, its negligible so we just use this one value
-    r2 = SUN.x;
-    r3 = r2 * sqrt(r2);
-
-    auto pull_sun = -home.mu * POS / r3;
-    //shit
+    
     return pull_earth;
 }
 

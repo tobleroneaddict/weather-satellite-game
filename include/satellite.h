@@ -83,7 +83,10 @@ class SDPU {
 class ADCS {
     public:
     //RPY
-    PID pid;
+    PID pid_x;
+    PID pid_y;
+    PID pid_z;
+    
     dquat targetq;
     double t_roll,t_pitch,t_yaw; //transmit these values
     double rate_roll,rate_pitch,rate_yaw;

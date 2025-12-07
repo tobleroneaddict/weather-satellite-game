@@ -116,7 +116,7 @@ int main() {
     //Run game loop and get dT
     while (true) {
         LAST = NOW;NOW = SDL_GetPerformanceCounter(); deltaTime = (double)((NOW - LAST) / (double)SDL_GetPerformanceFrequency() );
-        deltaTime = deltaTime * 100;
+        deltaTime = deltaTime * 1000;
         universal_time += deltaTime; //Ground station
         if (loop()) break;
         //SDL_Delay(100);

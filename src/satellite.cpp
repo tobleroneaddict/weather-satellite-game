@@ -23,21 +23,25 @@ void ADCS::step(Satellite* sat) {
     dvec3 nadir = -normalize(sat->physics.POS);
     dvec3 up = normalize(nadir - v * dot(nadir, v));
 
-    //targetq in ADCS memory
-    targetq = quatLookAtRH(v,up);
+    if (mode == STANDARD_GUIDANCE_MODE) {
+        //targetq in ADCS memory
+        targetq = quatLookAtRH(v,up);
 
-    //targetq = dquat{-normalize(sat->physics.VEL)};    //45,45,45 global
-    dquat error = get_error(sat->physics.attitude); //Get error to target quat
+        //dquat error = get_error(sat->physics.attitude);  //Get error to target quat
+        //this used to work then i fucked it up//but in standard mode it doesnt matter timestep errors will end up oscillating the sim anyway so i dont care
+        sat->physics.attitude = targetq;
+    }
+    if (mode == INERTIAL_GUIDANCE_MODE) {
+        cout << "unimp\n";
+    }
+    if (mode == STEERING_GUIDANCE_MODE) {
+        cout << "unimp\n";
+    }
 
-    
-        ; //- pid.Ki * pid.i_error;
-    //cout << magout << endl;
-    //need to PID
-    sat->physics.rate = eulerAngles(error);
-    //sat->physics.attitude = targetq;
+
 }
 void ADCS::reset() {
-    mode = INERTIAL_GUIDANCE_MODE;
+    mode = STANDARD_GUIDANCE_MODE;
     const double Kp = 0.2;
     const double Ki = 0.00003;
     const double Kd = 1.6;

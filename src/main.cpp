@@ -64,6 +64,7 @@ int loop() {
     float x = sat.physics.POS.x / 50000;
     float y = sat.physics.POS.y / 50000;
     float z = sat.physics.POS.z / 50000;
+    
     x += 400;
     y += 400;
     z += 400;
@@ -116,7 +117,7 @@ int main() {
     //Run game loop and get dT
     while (true) {
         LAST = NOW;NOW = SDL_GetPerformanceCounter(); deltaTime = (double)((NOW - LAST) / (double)SDL_GetPerformanceFrequency() );
-        deltaTime = deltaTime * 1000;
+        deltaTime = deltaTime * 4000;
         universal_time += deltaTime; //Ground station
         if (loop()) break;
         //SDL_Delay(100);

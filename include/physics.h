@@ -29,7 +29,7 @@ public:
     dvec3 VEL = {-4.08207 * 1000, 4.3215701 * 1000, 4.413379 * 1000};    //  m/s
     dvec3 T_ACC = {0,0,0}; //Thruster acceleration
     dquat attitude; //att
-    dvec3 rate; //att rate
+    dquat rate; //att rate
     //Sun position in ECI frame
     dvec3 SUN = {146.9 * 1000 * 1000, 0, 0};
 
@@ -52,7 +52,7 @@ public:
     void step();
 
     void kick_motor(float newtons);
-    
+
     float solar_panel_directivity(dvec3 local_panel_normal);
 private:
     void leap_frog();

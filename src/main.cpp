@@ -16,6 +16,7 @@ Satellite sat;
 void init() {
     sat.init();
     sat.step_simulation();
+    sat.physics.attitude = quat(vec3(45,45,45));
 
     SDL_HideCursor();
 
@@ -115,10 +116,10 @@ int main() {
     //Run game loop and get dT
     while (true) {
         LAST = NOW;NOW = SDL_GetPerformanceCounter(); deltaTime = (double)((NOW - LAST) / (double)SDL_GetPerformanceFrequency() );
-        deltaTime = deltaTime * 1000;
+        deltaTime = deltaTime * 100;
         universal_time += deltaTime; //Ground station
         if (loop()) break;
-        //SDL_Delay(1);
+        //SDL_Delay(100);
     }
 
     //Termination

@@ -15,10 +15,15 @@ struct Earth {
     float tilt = 23.5;
 };
 
+struct Sun {
+    double mu = 1.3275183e+20;
+};
+
 //  loosely based on NOAA 19 
 class Phys {
 public:
     Earth planet;
+    Sun home;
     //  Earth Centered Inertial, Cartesian coordinates pulled from GMAT
     dvec3 POS = {1799.209 * 1000, -3960.856 * 1000, 5797.431 * 1000};    //  m
     dvec3 VEL = {-4.08207 * 1000, 4.3215701 * 1000, 4.413379 * 1000};    //  m/s

@@ -21,22 +21,33 @@ void ADCS::step(Satellite* sat) {
 
     dvec3 v = -normalize(sat->physics.VEL);
     dvec3 nadir = -normalize(sat->physics.POS);
-
     dvec3 up = normalize(nadir - v * dot(nadir, v));
 
-    dquat targetq = quatLookAtRH(up,up);
+    //targetq in ADCS memory
+    targetq = quatLookAtRH(up,up);
 
     //targetq = dquat{-normalize(sat->physics.VEL)};    //45,45,45 global
-    //dquat error = get_error(sat->physics.attitude); //Get error to target quat
-    //cout << error.x << endl;
-    sat->physics.attitude = targetq;
+    dquat error = get_error(sat->physics.attitude); //Get error to target quat
+    double err_mag = sqrt((error.x * error.x) + (error.y * error.y) + (error.z * error.z));
+    pid.UpdateError(err_mag);
+    double magout = -pid.Kp * pid.p_error
+    - pid.Kd * pid.d_error
+    ; //- pid.Ki * pid.i_error;
+    //cout << magout << endl;
+    //need to PID
+    sat->physics.rate = eulerAngles(error);
+
 }
 void ADCS::reset() {
     mode = INERTIAL_GUIDANCE_MODE;
+    const double Kp = 0.2;
+    const double Ki = 0.00003;
+    const double Kd = 1.6;
+    pid.Init(Kp, Ki, Kd);
 
 }
 dquat ADCS::get_error(dquat current) {
-    return targetq * conjugate(current);
+    return targetq * inverse(current);
 }
 
 
@@ -247,5 +258,6 @@ void Satellite::init() {
     sys_tecs.reset();
     sys_comm.clear();
     sys_adcs.reset();
+    
     //sys_sdpu.reset();
 }

@@ -83,6 +83,7 @@ class SDPU {
 class ADCS {
     public:
     //RPY
+    PID pid;
     dquat targetq;
     double t_roll,t_pitch,t_yaw; //transmit these values
     double rate_roll,rate_pitch,rate_yaw;
@@ -93,6 +94,7 @@ class ADCS {
     dquat get_error(dquat current);
     void step(Satellite* sat);
     private:
+    
 };
 //Comms
 class COMM {

@@ -11,7 +11,7 @@
 #include <cstdint>
 #include <vector>
 #include <cmath>
-
+#include "pid.h"
 extern int* gFrameBuffer;
 extern SDL_Window* sdl_window;
 extern SDL_Renderer* sdl_renderer;
